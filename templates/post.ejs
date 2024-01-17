@@ -1,0 +1,99 @@
+<%- include('base') -%>
+
+    <div class="bg-[#F1F2F4] dark:text-zinc-300 dark:bg-slate-950">
+        <div class="gd-container font-spacegrotesk" data-v="">
+            <header class="fixed w-full bg-[#F1F2F4] dark:bg-slate-950 z-10" data-v="">
+                <div class="py-5 border-b dark:border-gray-800 font-semibold" data-v="">
+                    <div class="flex px-6 container max-w-5xl justify-between mx-auto items-baseline">
+                        <ul class="flex items-baseline space-x-5">
+                            <li class="text-base sm:text-2xl font-bold"><a href="/"
+                                    class="router-link-active router-link-exact-active underline" aria-current="page">
+                                    <%= author %>'s blog.
+                                </a></li>
+                        </ul>
+                        <ul class="flex items-center space-x-3 sm:space-x-6 text-sm sm:text-lg">
+                            <li><a href="/" class=""> Blogs </a></li>
+                        </ul>
+                    </div>
+                </div>
+            </header>
+            <main data-v="">
+                <div class="p-9" data-v=""></div>
+                <div class="px-6 container max-w-5xl mx-auto sm:grid grid-cols-12 gap-x-12">
+                    <div class="col-span-12 lg:col-span-9">
+                        <header>
+                            <h1 class="text-xl dark:text-zinc-300 md:text-3xl lg:text-4xl m-7 font-bold text-center">How
+                                <%= post["title"] %>
+                            </h1>
+                            <% if(post["cover"]) {%>
+                                <img src="<%= post["cover"] %>" alt="<%= post[" title"] %>
+                                class="m-auto rounded-2xl shadow-lg h-32 md:h-72 w-4/6 md:w-4/5 content-center mr-auto ml-auto
+                                object-cover">
+                                <% } %>
+
+                                    <div class="flex w-full justify-center text-xs md:text-base my-8">
+                                        <div
+                                            class="md:flex text-black dark:text-zinc-300 content-center gap-8 text-xs sm:text-sm">
+                                            <div class="flex items-center font-semibold"><svg fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24"
+                                                    xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                                    </path>
+                                                </svg>
+                                                <p>
+                                                    <%= post['create_time'] %>
+                                                </p>
+                                            </div>
+                                            <div class="flex items-center gap-2 flex-wrap my-5"><svg fill="none"
+                                                    stroke="currentColor" viewBox="0 0 24 24"
+                                                    xmlns="http://www.w3.org/2000/svg" class="w-4 h-4">
+                                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                                        stroke-width="2"
+                                                        d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z">
+                                                    </path>
+                                                </svg>
+                                                <% for(let [index,category] of post["category"].entries() || []) { %>
+                                                    <a href="/category/<%= category %>"
+                                                        class="bg-gray-200 dark:bg-slate-900 rounded-md px-2 py-1 font-semibold hover:underline">
+                                                        <%= category %>
+
+                                                    </a>
+
+                                                    <% } %>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                        </header>
+                        <div
+                            class="prose prose-pre:max-w-xs sm:prose-pre:max-w-full prose-sm sm:prose-base md:prose-lg prose-h1:no-underline max-w-5xl mx-auto prose-zinc dark:prose-invert prose-img:rounded-lg">
+
+                            <div>
+                                <%- markdown_html %>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </main>
+            <footer>
+                <div class="py-5 border-t dark:border-gray-800 mt-5 text-zinc-700 dark:text-zinc-300">
+                    <div class="px-6 container max-w-5xl mx-auto">
+                        <div class="grid grid-cols-1 md:grid-cols-3">
+                            <div>
+                                <p class="text-black dark:text-zinc-300 text-2xl py-1 font-semibold">
+                                    <%= author %>
+                                </p>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+            </footer>
+        </div>
+    </div>
+
+    <%- include('footer') -%>
