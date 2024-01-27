@@ -33,10 +33,10 @@ app.get('/', async (request, response) => {
             record_id: post.record_id,
             title: post.fields["title"],
             content: post.fields["content"],
-            cover: post.fields["cover"][0] || "",
-            category: post.fields["category"],
+            cover: post.fields["cover"] ? post.fields["cover"][0] ? post.fields["cover"][0] : "" : "",
+            category: post.fields["category"] || [],
             create_time: dayjs.unix(post.create_time).format("MMMM DD, YYYY"),
-            summary: post.fields["content"].substring(0, 200) + "...",
+            summary: post.fields["content"] ? post.fields["content"].substring(0, 200) + "..." : "",
 
         };
     })
@@ -73,10 +73,10 @@ app.get('/category/:category', async (request, response) => {
             record_id: post.record_id,
             title: post.fields["title"],
             content: post.fields["content"],
-            cover: post.fields["cover"][0] || "",
-            category: post.fields["category"],
+            cover: post.fields["cover"][0] ? post.fields["cover"][0] ? post.fields["cover"][0] : "" : "",
+            category: post.fields["category"] || [],
             create_time: dayjs.unix(post.create_time).format("MMMM DD, YYYY"),
-            summary: post.fields["content"].substring(0, 200) + "...",
+            summary: post.fields["content"] ? post.fields["content"].substring(0, 200) + "..." : "",
 
         };
     })
@@ -109,10 +109,10 @@ app.get('/search', async (request, response) => {
             record_id: post.record_id,
             title: post.fields["title"],
             content: post.fields["content"],
-            cover: post.fields["cover"][0] || "",
-            category: post.fields["category"],
+            cover: post.fields["cover"][0] ? post.fields["cover"][0] ? post.fields["cover"][0] : "" : "",
+            category: post.fields["category"] || [],
             create_time: dayjs.unix(post.create_time).format("MMMM DD, YYYY"),
-            summary: post.fields["content"].substring(0, 200) + "...",
+            summary: post.fields["content"] ? post.fields["content"].substring(0, 200) + "..." : "",
 
         };
     })
@@ -134,16 +134,16 @@ app.get("/post/:post_id", async (request, response) => {
     const post = {
         record_id: res.record_id,
         title: res.fields["title"],
-        category: res.fields["category"],
+        category: res.fields["category"] || [],
         create_time: dayjs.unix(res.create_time).format("MMMM DD, YYYY"),
-        cover: res.fields["cover"][0] || "",
+        cover: res.fields["cover"] ? res.fields["cover"][0] ? res.fields["cover"][0] : "" : "",
     };
     return response.render('post', {
         "author": author,
         "avatar": avatar,
         "post": post,
-        "markdown_html": converter.makeHtml(res.fields["content"]),
-        "category": res.fields["category"],
+        "markdown_html": converter.makeHtml(res.fields["content"] || ""),
+        "category": res.fields["category"] || [],
     });
 });
 
