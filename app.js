@@ -4,6 +4,16 @@ import axios from 'axios';
 import { load } from 'cheerio';
 import 'dotenv/config';
 
+const semanticVerSort = (majorA, minorA, patchA, majorB, minorB, patchB) => {
+  if (majorA !== majorB) {
+    return majorA - majorB;
+  }
+  if (minorA !== minorB) {
+    return minorA - minorB;
+  }
+  return patchA - patchB;
+};
+
 const configs = [
   {
     emulator: 'RetroArch',
@@ -20,6 +30,12 @@ const configs = [
         version,
       }));
     },
+    sorter: (a, b) => {
+      const [majorA, minorA, patchA] = a.split('.').map(Number);
+      const [majorB, minorB, patchB] = b.split('.').map(Number);
+
+      return semanticVerSort(majorA, minorA, patchA, majorB, minorB, patchB);
+    },
   },
   {
     emulator: 'Dolphin',
@@ -34,6 +50,15 @@ const configs = [
           return { url, version };
         })
         .toArray();
+    },
+    sorter: (a, b) => {
+      const patchA = Number(a.split('-')[1]);
+      const [majorA, minorA] = a.split('-')[0].split('.').map(Number);
+
+      const patchB = Number(b.split('-')[1]);
+      const [majorB, minorB] = b.split('-')[0].split('.').map(Number);
+
+      return semanticVerSort(majorA, minorA, patchA, majorB, minorB, patchB);
     },
   },
 ];
@@ -52,14 +77,20 @@ const table = api.repo(repo).table(tableId);
 
 app.get('/update-list', async (request, response) => {
   for (let i = 0, len = configs.length; i < len; i++) {
-    const { url, parse, emulator } = configs[i];
+    const { url, parse, sorter, emulator } = configs[i];
 
     const pageResp = await axios.get(url);
     const result = parse(load(pageResp.data));
+    result.sort((a, b) => sorter(a.version, b.version));
 
     await table.records.deleteMany({ where: { Emulator: { eq: emulator } } });
     await table.records.createMany(
-      result.map(({ version, url }) => ({ Version: version, Emulator: emulator, URL: url }))
+      result.map(({ version, url }, i) => ({
+        Version: version,
+        Emulator: emulator,
+        URL: url,
+        index: i,
+      }))
     );
   }
 
@@ -78,7 +109,10 @@ app.get('/list/:emulator', async (request, response) => {
     return response.status(400).send('Invalid emulator');
   }
 
-  const records = await table.records.findMany({ where: { Emulator: { eq: emulator } } });
+  const records = await table.records.findMany({
+    where: { Emulator: { eq: emulator } },
+    orderBy: { index: 'desc' },
+  });
   const packages = records.map((record) => ({
     url: record.fields['URL'],
     version: record.fields['Version'],
