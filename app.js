@@ -67,7 +67,6 @@ app.get('/update-list', async (request, response) => {
 });
 
 app.get('/list/:emulator', async (request, response) => {
-  console.log(process.env.LEAPCELL_API_KEY, process.env.RESOURCE, process.env.TABLE_ID);
   const rawEmulator = request.params.emulator;
 
   let emulator;
