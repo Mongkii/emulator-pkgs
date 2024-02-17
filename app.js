@@ -64,8 +64,6 @@ const configs = [
 ];
 
 const app = express();
-app.set('views', './templates');
-app.set('view engine', 'ejs');
 
 const api = new Leapcell({
   apiKey: process.env.LEAPCELL_API_KEY,
@@ -97,6 +95,14 @@ app.get('/update-list', async (request, response) => {
   response.send('OK');
 });
 
+const renderList = (emulator, packages) =>
+  `
+<h1>${emulator}</h1>
+<ul>
+  ${packages.map(({ url, version }) => `<li><a href="${url}">${version}</a></li>`).join('')}
+</ul>
+`.trim();
+
 app.get('/list/:emulator', async (request, response) => {
   const rawEmulator = request.params.emulator;
 
@@ -118,7 +124,7 @@ app.get('/list/:emulator', async (request, response) => {
     version: record.fields['Version'],
   }));
 
-  return response.render('packages', { emulator, packages });
+  return response.send(renderList(emulator, packages));
 });
 
 app.listen(8080, () => {
