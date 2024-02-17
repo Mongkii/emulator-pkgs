@@ -45,8 +45,9 @@ const configs = [
 
       return infoTrs
         .map((i, ele) => {
-          const version = $(ele).find('td.version').text().trim();
-          const url = $(ele).next().find('a.android').attr('href');
+          const $ele = $(ele);
+          const version = $ele.find('td.version').text().trim();
+          const url = $ele.next().find('a.android').attr('href');
           return { url, version };
         })
         .toArray();
